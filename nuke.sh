@@ -48,10 +48,14 @@ fi
 
 # sudo mv ./${installation_dir_name} ${nuke_install_basepath}/
 
-sudo cp ./nuke.png ${nuke_install_basepath}/nuke.png
+sudo cp ./icons/nuke.png ${nuke_install_basepath}/nuke.png
 
 echo "--- Installing dependencies..."
-sudo apt install libglu1-mesa libglu1-mesa-dev -y
+if command -v dnf &>/dev/null; then
+  sudo dnf install mesa-libGL.x86_64 mesa-libGL-devel.x86_64 alsa-lib-devel.x86_64 libxkbcommon.x86_64 mesa-libGLU mesa-libGL-devel -y
+elif command -v apt &>/dev/null; then
+  sudo apt install libglu1-mesa libglu1-mesa-dev -y
+fi
 
 echo "--- Creating Application shortcuts..."
 sudo mkdir -p ~/.local/share/applications/
@@ -81,12 +85,4 @@ Exec=${nuke_install_basepath}/${installation_dir_name}/Nuke${vnum} ${value}
 Icon=${nuke_install_basepath}/nuke.png" >${shortcut_filename}.desktop
 done
 
-# echo "--- Cleanup..."
-# if [ "${delete_installer}" = 1 ]; then
-#   echo "deleting downloaded installer..."
-#   rm ${installer_path}
-#   sudo rm -r ./Nuke${version} >>/dev/null
-# else
-#   echo "leaving previously-existing installer in place..."
-# fi
 echo "--- Finished installing ${app_name}"
