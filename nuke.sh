@@ -1,8 +1,8 @@
 #!/bin/bash
 
 app_name="Nuke"
-installer_location=/home/$USER/Downloads
 
+installer_location=/home/$USER/Downloads
 if [ $# -gt 0 ]; then
   installer_location="$1"
 fi
