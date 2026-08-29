@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=VFX Installers
+Comment=Install and manage VFX software on Ubuntu
+Exec=/usr/bin/python3 /home/carlos/repos/ubuntu-vfx-installers/gui.py
+Icon=applications-graphics
+Terminal=false
+Type=Application
+Categories=Utility;
