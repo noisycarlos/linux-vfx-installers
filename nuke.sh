@@ -3,6 +3,10 @@
 app_name="Nuke"
 installer_location=/home/$USER/Downloads
 
+if [ $# -gt 0 ]; then
+  installer_location="$1"
+fi
+
 installer_path_compressed=$(find $installer_location -maxdepth 1 -type f -name 'Nuke*-linux-x86_64.tgz' | sort -V | tail -n 1)
 installer_path=${installer_path_compressed%.tgz}.run
 installer_filename=${installer_path##*/}
