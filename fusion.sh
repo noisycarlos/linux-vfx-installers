@@ -9,35 +9,38 @@ fi
 
 installer_path_compressed=$(find "$installer_location" -maxdepth 1 -type f \( -name 'Blackmagic_Fusion_Studio_*_Linux.zip' -o -name 'Blackmagic_Fusion_Studio_*_Linux.tar.tar' \) | sort -V | tail -n 1)
 
-if [ ! -f "$installer_path_compressed" ]; then
-  echo "--- Skipping installation of ${app_name}, no installers found."
-  exit 1
+if [ -f "$installer_path_compressed" ]; then
+
+  installer_name="$(basename ${installer_path_compressed%_Linux.*})"
+
+  echo "----- Found compressed installer for $installer_name -----"
+
+  installer_dir=$installer_location/$installer_name
+
+  mkdir $installer_dir -p
+  # rm -f $installer_dir/* 2>/dev/null
+
+  case "$installer_path_compressed" in
+  *.zip)
+    echo "--- Unziping $installer_name..."
+    unzip -q -n "$installer_path_compressed" -d "$installer_dir"
+    ;;
+  *.tar.tar)
+    echo "--- Uncompressing $installer_name..."
+    tar -xf "$installer_path_compressed" --directory="$installer_dir" --keep-old-files
+    ;;
+  esac
+else
+  echo "-- No compressed installers found for $app_name. Looking for uncompressed ones..."
+  installer_dir=$installer_location
 fi
-
-installer_name="$(basename ${installer_path_compressed%_Linux.*})"
-
-echo "----- Found installer for $installer_name -----"
-
-installer_dir=$installer_location/$installer_name
-
-mkdir $installer_dir -p
-# rm -f $installer_dir/* 2>/dev/null
-
-case "$installer_path_compressed" in
-*.zip)
-  echo "--- Unziping $installer_name..."
-  unzip -q -n "$installer_path_compressed" -d "$installer_dir"
-  ;;
-*.tar.tar)
-  echo "--- Uncompressing $installer_name..."
-  tar -xf "$installer_path_compressed" --directory="$installer_dir" --skip-old-files --keep-old-files
-  ;;
-esac
 
 installer_path=$(find "$installer_dir" -maxdepth 1 -type f -name 'Blackmagic_Fusion_Studio_Linux_*_installer.run')
 
-if [ ! -f "$installer_path" ]; then
-  echo "--- Error. Could not find uncompressed installer"
+if [ -f "$installer_path" ]; then
+  echo "-- Found installer: $installer_path"
+else
+  echo "----- Skipping installation of ${app_name}, no installers found."
   exit 1
 fi
 
